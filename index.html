@@ -3,213 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Wallet Factory</title>
+    <title>BlackHole Master</title>
     <link rel="icon" type="image/png" href="https://woofinglabs.github.io/GdogToTheMoon/images/gdog_logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: { primary: '#0068FF', secondary: '#18E5A0', accent: '#FFD700', dark: '#070808', 'light-gray': '#E5E7EB' },
-                    fontFamily: { sans: ['Inter', 'system-ui'], display: ['Changa One', 'system-ui'] },
-                    animation: { 'float': 'float 3s ease-in-out infinite' },
-                    keyframes: { float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } } }
-                }
-            }
-        }
+        tailwind.config = { theme: { extend: { colors: { primary: '#0068FF', secondary: '#18E5A0', accent: '#FFD700', dark: '#070808', 'light-gray': '#E5E7EB' } } } }
     </script>
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .text-shadow-glow { text-shadow: 0 0 10px rgba(0, 104, 255, 0.5); }
-            .glow-border { box-shadow: 0 0 12px rgba(24, 229, 160, 0.3); }
-            .bg-grid { background-image: url('data:image/svg+xml,%3Csvg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"%3E%3Ccircle cx="1" cy="1" r="1" fill="%230068FF" fill-opacity="0.1"/%3E%3C/svg%3E'); background-size: 20px 20px; }
-        }
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Changa+One&display=swap" rel="stylesheet">
+    <style>
+        .glow { box-shadow: 0 0 15px rgba(24, 229, 160, 0.5); }
+        .scrollbar::-webkit-scrollbar { width: 6px; }
+        .scrollbar::-webkit-scrollbar-track { background: #111; }
+        .scrollbar::-webkit-scrollbar-thumb { background: #0068FF; border-radius: 3px; }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Changa+One&display=swap" rel="stylesheet">
 </head>
-<body class="bg-dark text-white font-sans overflow-x-hidden">
-    <header class="fixed w-full z-50 bg-dark/90 backdrop-blur-md" id="navbar">
+<body class="bg-dark text-white min-h-screen">
+
+    <header class="fixed top-0 w-full z-50 bg-dark/95 backdrop-blur-md border-b border-primary/20">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-3 cursor-pointer">
-                <div class="w-10 h-10 rounded-full overflow-hidden">
-                    <img src="https://woofinglabs.github.io/GdogToTheMoon/images/gdog_logo.png" alt="Logo" class="w-full h-full object-cover">
-                </div>
-                <span class="font-display text-3xl text-primary text-shadow-glow">Wallet Factory</span>
+            <div class="flex items-center space-x-3">
+                <img src="https://woofinglabs.github.io/GdogToTheMoon/images/gdog_logo.png" class="w-10 h-10 rounded-full">
+                <span class="text-2xl font-bold text-primary">BlackHole Master</span>
             </div>
-            <button id="menuToggle" class="md:hidden text-2xl text-primary"><i class="fa fa-bars"></i></button>
+            <button id="connectBtn" class="px-6 py-2 bg-primary rounded-full hover:bg-primary/80 transition">Connect</button>
         </div>
     </header>
 
-    <section class="min-h-screen pt-24 pb-16 bg-grid relative overflow-hidden flex items-center justify-center">
-        <div class="absolute inset-0 bg-gradient-to-b from-primary/10 to-dark pointer-events-none"></div>
-        <div class="absolute top-0 left-0 w-80 h-80 bg-primary/10 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-0 right-0 w-80 h-80 bg-secondary/10 rounded-full blur-3xl"></div>
-        <div class="container mx-auto px-4 text-center relative z-10">
-            <div class="w-48 h-48 mx-auto mb-8 animate-float">
-                <img src="https://woofinglabs.github.io/GdogToTheMoon/images/gdog_logo.png" alt="Logo" class="w-full h-full object-cover rounded-full border-4 border-secondary/50 glow-border">
+    <main class="pt-24 pb-20 px-4">
+        <div class="text-center mb-10">
+            <h1 class="text-5xl md:text-7xl font-bold text-primary mb-4">100 BlackHole Wallets</h1>
+            <p class="text-xl text-light-gray">Create · Copy · Control · Sweep All</p>
+        </div>
+
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
+
+            <!-- 左侧：钱包列表 -->
+            <div class="bg-dark/80 border border-primary/30 rounded-2xl p-6 glow">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold">My Wallets (<span id="count">0</span>/100)</h2>
+                    <div>
+                        <input id="createNum" type="number" min="1" max="100" value="100" class="w-20 px-3 py-1 bg-dark/60 border border-primary/30 rounded text-center">
+                        <button id="createBtn" class="ml-2 px-4 py-1 bg-secondary text-black rounded font-bold hover:bg-secondary/80">CREATE</button>
+                    </div>
+                </div>
+                <div id="walletList" class="space-y-2 max-h-96 overflow-y-auto scrollbar"></div>
             </div>
-            <h1 class="font-display text-5xl md:text-7xl mb-6 text-primary text-shadow-glow">100 BlackHole Wallets</h1>
-            <p class="text-xl md:text-2xl text-light-gray max-w-3xl mx-auto mb-10">
-                Create 100 wallets in 1 click · All funds auto belong to you
-            </p>
 
-            <div class="bg-dark/50 p-6 rounded-lg border border-primary/30 max-w-2xl mx-auto space-y-6">
-                <button id="connectWalletButton" class="w-full px-6 py-3 bg-primary text-white rounded-full font-medium hover:bg-primary/80 transition-all">
-                    Connect Wallet
-                </button>
-                <p id="networkStatus" class="text-light-gray text-sm">Click to connect...</p>
+            <!-- 右侧：操作面板 -->
+            <div id="controlPanel" class="bg-dark/80 border border-primary/30 rounded-2xl p-6 glow hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold">Control Wallet</h2>
+                    <button id="closePanel" class="text-2xl text-light-gray hover:text-white">×</button>
+                </div>
+                <div class="font-mono text-sm mb-4 p-3 bg-dark/60 rounded border border-primary/20 break-all">
+                    <span id="currentWallet">0x...</span>
+                    <button onclick="copyAddr()" class="ml-3 text-secondary hover:text-white"><i class="fa fa-copy"></i></button>
+                </div>
 
-                <div class="text-left space-y-4">
-                    <div>
-                        <label class="block text-light-gray mb-2">Create Wallets (1-100)</label>
-                        <div class="flex gap-3">
-                            <input id="createCount" type="number" min="1" max="100" value="100" class="w-full px-4 py-2 bg-dark/80 border border-primary/20 rounded-lg text-white focus:outline-none focus:border-secondary">
-                            <button id="createButton" class="px-6 py-2 bg-secondary text-dark rounded-full font-bold hover:bg-secondary/80 transition-all">
-                                CREATE
-                            </button>
-                        </div>
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-dark/60 p-4 rounded border border-primary/20">
+                        <p class="text-light-gray text-xs">GT Balance</p>
+                        <p id="ethBal" class="text-2xl font-bold text-secondary">0</p>
                     </div>
-
-                    <div>
-                        <label class="block text-light-gray mb-2">Your Wallets (<span id="walletCount">0</span>/100)</label>
-                        <div id="walletList" class="max-h-60 overflow-y-auto bg-dark/80 border border-primary/20 rounded-lg p-3 text-xs font-mono text-light-gray space-y-1"></div>
-                    </div>
-
-                    <div>
-                        <label class="block text-light-gray mb-2">Sweep All Wallets</label>
-                        <input id="tokenSweep" type="text" placeholder="Token Address (leave blank = GT only)" class="w-full px-4 py-2 bg-dark/80 border border-primary/20 rounded-lg text-white text-sm focus:outline-none focus:border-secondary">
-                        <button id="sweepButton" class="mt-3 w-full px-6 py-3 bg-accent text-dark rounded-full font-bold hover:bg-accent/80 transition-all">
-                            SWEEP ALL TO ME
-                        </button>
+                    <div class="bg-dark/60 p-4 rounded border border-primary/20">
+                        <p class="text-light-gray text-xs">Token Balance</p>
+                        <p id="tokenBal" class="text-2xl font-bold text-accent">0</p>
                     </div>
                 </div>
 
-                <p id="progressStatus" class="text-light-gray text-sm min-h-6">Ready</p>
+                <div class="space-y-4">
+                    <div>
+                        <input id="tokenAddr" type="text" placeholder="Token Address (optional)" class="w-full px-4 py-2 bg-dark/60 border border-primary/30 rounded focus:border-secondary outline-none">
+                    </div>
+                    <div>
+                        <input id="amountInput" type="text" placeholder="Amount (leave blank = all)" class="w-full px-4 py-2 bg-dark/60 border border-primary/30 rounded focus:border-secondary outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button id="takeGT" class="py-3 bg-primary rounded-full font-bold hover:bg-primary/80">Take GT</button>
+                        <button id="takeToken" class="py-3 bg-accent text-black rounded-full font-bold hover:bg-accent/80">Take Token</button>
+                    </div>
+                    <button id="sweepOne" class="w-full py-3 bg-secondary text-black rounded-full font-bold hover:bg-secondary/80">SWEEP THIS WALLET</button>
+                </div>
+            </div>
+
+            <!-- 全局扫光按钮 -->
+            <div class="md:col-span-2 text-center mt-8">
+                <button id="sweepAllBtn" class="px-12 py-4 bg-gradient-to-r from-accent to-secondary text-black text-xl font-bold rounded-full hover:scale-105 transition glow">
+                    SWEEP ALL 100 WALLETS
+                </button>
             </div>
         </div>
-    </section>
+    </main>
 
-    <footer class="bg-dark/95 py-12 border-t border-primary/20">
-        <div class="container mx-auto px-4 text-center">
-            <p class="text-light-gray text-sm">© 2025 BlackHole Factory. All coins belong to YOU.</p>
-        </div>
-    </footer>
+    <div id="toast" class="fixed bottom-6 right-6 bg-primary text-white px-6 py-3 rounded-full shadow-2xl z-50 hidden"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
     <script>
         const FACTORY = "0x6F176521BC5bf3eE2443dd26cD468fa93d1ca17E";
-        const factoryAbi = [
-            {"inputs":[{"internalType":"uint256","name":"n","type":"uint256"}],"name":"createWallets","outputs":[{"internalType":"address[]","name":"created","type":"address[]"}],"stateMutability":"nonpayable","type":"function"},
-            {"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getWallets","outputs":[{"internalType":"address[]","name":"","type":"address[]"}],"stateMutability":"view","type":"function"},
-            {"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"countOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}
-        ];
-        const walletAbi = [
-            {"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
-            {"inputs":[{"internalType":"uint256","name":"a","type":"uint256"}],"name":"takeETH","outputs":[],"stateMutability":"nonpayable","type":"function"},
-            {"inputs":[{"internalType":"address","name":"t","type":"address"},{"internalType":"uint256","name":"a","type":"uint256"}],"name":"takeToken","outputs":[],"stateMutability":"nonpayable","type":"function"},
-            {"inputs":[{"internalType":"address[]","name":"tokens","type":"address[]"}],"name":"sweep","outputs":[],"stateMutability":"nonpayable","type":"function"},
-            {"inputs":[],"name":"eth","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}
-        ];
+        const FACTORY_ABI = [{"inputs":[{"internalType":"uint256","name":"n","type":"uint256"}],"name":"createWallets","outputs":[{"internalType":"address[]","name":"created","type":"address[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getWallets","outputs":[{"internalType":"address[]","name":"","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"countOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}];
+        const WALLET_ABI = [{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"a","type":"uint256"}],"name":"takeETH","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"t","type":"address"},{"internalType":"uint256","name":"a","type":"uint256"}],"name":"takeToken","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"tokens","type":"address[]"}],"name":"sweep","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"eth","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"t","type":"address"}],"name":"token","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}];
 
-        let web3, account, factory, wallets = [];
+        let web3, account, factory, wallets = [], currentWallet = null;
 
         async function init() {
-            if (!window.ethereum) return alert("Install MetaMask");
+            if (!window.ethereum) return toast("Install MetaMask");
             web3 = new Web3(window.ethereum);
             try {
                 await ethereum.request({ method: 'eth_requestAccounts' });
                 account = (await web3.eth.getAccounts())[0];
-                document.getElementById('connectWalletButton').innerText = `${account.slice(0,6)}...${account.slice(-4)}`;
-                await switchToGateLayer();
-                factory = new web3.eth.Contract(factoryAbi, FACTORY);
+                document.getElementById('connectBtn').innerText = `${account.slice(0,6)}...${account.slice(-4)}`;
+                await switchChain();
+                factory = new web3.eth.Contract(FACTORY_ABI, FACTORY);
                 await loadWallets();
-            } catch (e) {
-                document.getElementById('progressStatus').innerText = "Connect failed";
-            }
+            } catch { toast("Connect failed"); }
         }
 
-        async function switchToGateLayer() {
+        async function switchChain() {
             try {
                 await ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x2768' }] });
             } catch (e) {
                 if (e.code === 4902) {
-                    await ethereum.request({
-                        method: 'wallet_addEthereumChain',
-                        params: [{
-                            chainId: '0x2768',
-                            chainName: 'Gate Layer',
-                            rpcUrls: ['https://gatelayer-mainnet.gatenode.cc/'],
-                            nativeCurrency: { name: 'GT', symbol: 'GT', decimals: 18 },
-                            blockExplorerUrls: ['https://www.gatescan.org/gatelayer/']
-                        }]
-                    });
+                    await ethereum.request({ method: 'wallet_addEthereumChain', params: [{ chainId: '0x2768', chainName: 'Gate Layer', rpcUrls: ['https://gatelayer-mainnet.gatenode.cc/'], nativeCurrency: { name: 'GT', symbol: 'GT', decimals: 18 } }] });
                 }
             }
         }
 
         async function loadWallets() {
             const count = await factory.methods.countOf(account).call();
-            document.getElementById('walletCount').innerText = count;
-            if (count == 0) {
-                document.getElementById('walletList').innerHTML = "<p class='text-center py-2'>No wallet yet</p>";
-                return;
-            }
-            wallets = await factory.methods.getWallets(account).call();
+            document.getElementById('count').innerText = count;
+            wallets = count > 0 ? await factory.methods.getWallets(account).call() : [];
             const list = document.getElementById('walletList');
-            list.innerHTML = "";
-            for (let w of wallets) {
+            list.innerHTML = '';
+            if (wallets.length === 0) { list.innerHTML = '<p class="text-center text-light-gray py-8">No wallet yet</p>'; return; }
+            for (let i = 0; i < wallets.length; i++) {
+                const w = wallets[i];
                 const bal = web3.utils.fromWei(await web3.eth.getBalance(w), 'ether').slice(0,8);
                 const div = document.createElement('div');
-                div.className = "flex justify-between items-center p-2 bg-dark/60 rounded border border-primary/10";
+                div.className = 'bg-dark/60 p-3 rounded-lg border border-primary/20 flex justify-between items-center hover:border-secondary transition';
                 div.innerHTML = `
-                    <span class="truncate w-48">${w}</span>
-                    <span class="text-secondary">${bal} GT</span>
+                    <div>
+                        <div class="font-mono text-sm truncate w-48">${w}</div>
+                        <div class="text-xs text-light-gray">${bal} GT</div>
+                    </div>
+                    <button onclick="openWallet('${w}')" class="px-4 py-1 bg-primary rounded hover:bg-primary/80 text-sm">OPEN</button>
                 `;
                 list.appendChild(div);
             }
         }
 
-        document.getElementById('connectWalletButton').onclick = init;
+        window.openWallet = async (addr) => {
+            currentWallet = new web3.eth.Contract(WALLET_ABI, addr);
+            document.getElementById('currentWallet').innerText = addr;
+            document.getElementById('controlPanel').classList.remove('hidden');
+            await refreshBalance();
+        };
 
-        document.getElementById('createButton').onclick = async () => {
-            const n = document.getElementById('createCount').value;
-            if (!n || n < 1 || n > 100) return alert("1-100");
-            document.getElementById('progressStatus').innerText = "Creating...";
+        async function refreshBalance() {
+            const eth = web3.utils.fromWei(await web3.eth.getBalance(currentWallet._address), 'ether');
+            document.getElementById('ethBal').innerText = parseFloat(eth).toFixed(4);
+            const tokenAddr = document.getElementById('tokenAddr').value.trim();
+            if (tokenAddr && web3.utils.isAddress(tokenAddr)) {
+                try {
+                    const token = new web3.eth.Contract([{"inputs":[{"internalType":"address","name":"a","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}], tokenAddr);
+                    const bal = await token.methods.balanceOf(currentWallet._address).call();
+                    const decimals = 18;
+                    document.getElementById('tokenBal').innerText = (bal / (10**decimals)).toFixed(4);
+                } catch { document.getElementById('tokenBal').innerText = '0'; }
+            } else {
+                document.getElementById('tokenBal').innerText = '—';
+            }
+        }
+
+        window.copyAddr = () => {
+            navigator.clipboard.writeText(document.getElementById('currentWallet').innerText);
+            toast("Copied!");
+        };
+
+        document.getElementById('closePanel').onclick = () => {
+            document.getElementById('controlPanel').classList.add('hidden');
+            currentWallet = null;
+        };
+
+        document.getElementById('createBtn').onclick = async () => {
+            const n = document.getElementById('createNum').value;
+            if (n < 1 || n > 100) return toast("1-100");
+            toast("Creating " + n + " wallets...");
             try {
                 await factory.methods.createWallets(n).send({ from: account });
-                document.getElementById('progressStatus').innerText = `${n} wallets created!`;
+                toast(n + " wallets created!");
                 await loadWallets();
-            } catch (e) {
-                document.getElementById('progressStatus').innerText = "Failed: " + e.message;
-            }
+            } catch (e) { toast("Failed"); }
         };
 
-        document.getElementById('sweepButton').onclick = async () => {
-            if (wallets.length === 0) return alert("No wallet");
-            const tokenAddr = document.getElementById('tokenSweep').value.trim();
-            const tokens = tokenAddr && web3.utils.isAddress(tokenAddr) ? [tokenAddr] : [];
-            document.getElementById('progressStatus').innerText = "Sweeping all...";
-            try {
-                for (let w of wallets) {
-                    const wallet = new web3.eth.Contract(walletAbi, w);
-                    if (tokens.length > 0) {
-                        await wallet.methods.sweep(tokens).send({ from: account });
-                    } else {
-                        const bal = await web3.eth.getBalance(w);
-                        if (bal > 0) await wallet.methods.takeETH(bal).send({ from: account });
-                    }
-                }
-                document.getElementById('progressStatus').innerText = "All swept! Check your wallet";
-                await loadWallets();
-            } catch (e) {
-                document.getElementById('progressStatus').innerText = "Sweep failed: " + e.message;
-            }
+        document.getElementById('takeGT').onclick = async () => {
+            const amt = document.getElementById('amountInput').value.trim();
+            const bal = await web3.eth.getBalance(currentWallet._address);
+            const sendAmt = amt ? web3.utils.toWei(amt, 'ether') : bal;
+            if (sendAmt === '0') return toast("No GT");
+            toast("Taking GT...");
+            await currentWallet.methods.takeETH(sendAmt).send({ from: account });
+            toast("GT taken!");
+            await refreshBalance();
         };
 
-        document.getElementById('menuToggle').onclick = () => {
-            document.getElementById('mobileMenu')?.classList.toggle('hidden');
+        document.getElementById('takeToken').onclick = async () => {
+            const t = document.getElementById('tokenAddr').value.trim();
+            if (!web3.utils.isAddress(t)) return toast("Invalid token");
+            const amt = document.getElementById('amountInput').value.trim();
+            const bal = await currentWallet.methods.token(t).call();
+            const sendAmt = amt ? web3.utils.toWei(amt, 'ether') : bal;
+            if (sendAmt === '0') return toast("No token");
+            toast("Taking token...");
+            await currentWallet.methods.takeToken(t, sendAmt).send({ from: account });
+            toast("Token taken!");
+            await refreshBalance();
         };
+
+        document.getElementById('sweepOne').onclick = async () => {
+            const t = document.getElementById('tokenAddr').value.trim();
+            const tokens = t && web3.utils.isAddress(t) ? [t] : [];
+            toast("Sweeping this wallet...");
+            await currentWallet.methods.sweep(tokens).send({ from: account });
+            toast("Wallet swept!");
+            await refreshBalance();
+        };
+
+        document.getElementById('sweepAllBtn').onclick = async () => {
+            if (wallets.length === 0) return toast("No wallet");
+            const t = prompt("Token address (blank = GT only):");
+            const tokens = t && web3.utils.isAddress(t) ? [t] : [];
+            toast("Sweeping ALL wallets...");
+            for (let w of wallets) {
+                const wallet = new web3.eth.Contract(WALLET_ABI, w);
+                try { await wallet.methods.sweep(tokens).send({ from: account, gas: 300000 }); } catch {}
+            }
+            toast("ALL SWEPT! Check your wallet");
+            await loadWallets();
+        };
+
+        function toast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('hidden'), 3000);
+        }
+
+        document.getElementById('connectBtn').onclick = init;
+        document.getElementById('tokenAddr').oninput = refreshBalance;
     </script>
 </body>
 </html>
